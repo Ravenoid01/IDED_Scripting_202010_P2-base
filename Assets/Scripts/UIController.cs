@@ -15,25 +15,16 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private Button restartBtn;
 
-    [SerializeField]
-    private float tickRate = 0.2F;
-
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // Start is called before the first frame update
     private void Start()
     {
         ToggleRestartButton(false);
 
         playerRef = FindObjectOfType<Player>();
-
-        if (playerRef != null && lifeImages.Length == Player.PLAYER_LIVES)
-        {
-            InvokeRepeating("UpdateUI", 0F, tickRate);
-        }
     }
 
     private void ToggleRestartButton(bool val)
@@ -44,31 +35,50 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private void UpdateUI()
+    public void Subscribe1()
+    {
+        playerRef.OnPlayerHit += HealthBar;
+    }
+
+    public void Subscribe2()
+    {
+        if (scoreLabel != null)
+        {
+            playerRef.OnPlayerScoreChanged += ChangeScore;
+        }
+    }
+
+    public void Subscribe3()
+    {
+        if (playerRef.Lives <= 0)
+        {
+            playerRef.OnPlayerDied += Gameover;
+        }
+    }
+
+    private void Gameover()
+    {
+        if (scoreLabel != null)
+        {
+            scoreLabel.text = "Game Over";
+        }
+
+        ToggleRestartButton(true);
+    }
+
+    private void ChangeScore()
+    {
+        scoreLabel.text = playerRef.Score.ToString();
+    }
+
+    private void HealthBar()
     {
         for (int i = 0; i < lifeImages.Length; i++)
         {
             if (lifeImages[i] != null && lifeImages[i].enabled)
             {
-                lifeImages[i].gameObject.SetActive(playerRef.Lives >= i + 1);
+                lifeImages[i].gameObject.SetActive(playerRef.Lives >= i + 2);
             }
-        }
-
-        if (scoreLabel != null)
-        {
-            scoreLabel.text = playerRef.Score.ToString();
-        }
-
-        if (playerRef.Lives <= 0)
-        {
-            CancelInvoke();
-
-            if (scoreLabel != null)
-            {
-                scoreLabel.text = "Game Over";
-            }
-
-            ToggleRestartButton(true);
         }
     }
 }
