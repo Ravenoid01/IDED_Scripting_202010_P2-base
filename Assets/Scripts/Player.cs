@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
 
     private UIController uiController;
 
+    private List<Rigidbody> bulletCollection = new List<Rigidbody>();
+
     [Header("Movement")]
     [SerializeField]
     private float moveSpeed = 1F;
@@ -33,8 +35,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform bulletSpawnPoint;
 
-    [SerializeField]
-    private float bulletSpeed = 3F;
+    private float bulletSpeed = 10F;
+
+    private Vector3 bulletVelocity;
 
     #endregion Bullet
 
@@ -81,6 +84,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         bulletPool = GetComponent<BulletPool>();
+        bulletVelocity = transform.up * bulletSpeed;
     }
 
     private void Start()
@@ -133,17 +137,36 @@ public class Player : MonoBehaviour
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && CanShoot)
             {
                 bullet = bulletPool.SpawnBullet();
-                bullet.transform.position = bulletSpawnPoint.position;
-                bullet.AddForce(transform.up * bulletSpeed, ForceMode.Impulse);
-                Invoke("StoreBullet", 3F);
+                ChooseBullet(bullet);
+                bullet.velocity = Vector3.zero;
+                bullet.transform.position = bulletSpawnPoint.position;               
+                bullet.AddForce(bulletVelocity, ForceMode.Impulse);               
             }
         }
     }
+
+    private void OnEnable()
+    {
+        Invoke("StoreBullet", 4f);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke("Storebullet");
+    }
+    private void ChooseBullet(Rigidbody bulletItem)
+    {
+        bulletCollection.Add(bulletItem);
+        Invoke("StoreBullet", 3F);
+    }
     private void StoreBullet()
     {
+
         if (onBulletStored != null)
         {
-            onBulletStored(bullet);
+            onBulletStored(bulletCollection[0]);
+            bulletCollection.RemoveAt(0);
         }
+
     }
 }

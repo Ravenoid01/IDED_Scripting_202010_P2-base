@@ -11,7 +11,6 @@ public class BulletPool : MonoBehaviour
     [SerializeField]
     private Transform bulletSpawnPoint;
 
-    [SerializeField]
     private int poolSize = 20;
 
     private List<Rigidbody> bulletList = new List<Rigidbody>();
@@ -25,6 +24,7 @@ public class BulletPool : MonoBehaviour
             bullet = bulletList[0];
             bulletList.RemoveAt(0);
             bullet.gameObject.SetActive(true);
+            //player.enabled = true;
         }
         else
         {
@@ -36,10 +36,15 @@ public class BulletPool : MonoBehaviour
         return bullet;
     }
 
-    public void StoreBullet(Rigidbody targetBullet)
+    private void StoreBullet(Rigidbody targetBullet)
     {
-        bulletList.Add(targetBullet);  
+        //player.onBulletStored -= StoreBullet;
+
+        bulletList.Add(targetBullet);
+        targetBullet.velocity = Vector3.zero;
         targetBullet.gameObject.SetActive(false);
+        //player.enabled = false;
+        targetBullet.transform.position = transform.position;
     }
     private void Start()
     {
