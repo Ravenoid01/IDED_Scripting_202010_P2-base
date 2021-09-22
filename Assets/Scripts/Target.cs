@@ -10,9 +10,6 @@ public class Target : MonoBehaviour
     [SerializeField]
     private int maxHP = 1;
 
-    [SerializeField]
-    private int scoreAdd = 10;
-
     private int currentHP;
 
     private void Start()
@@ -28,20 +25,17 @@ public class Target : MonoBehaviour
 
         if (collidedObjectLayer.Equals(Utils.BulletLayer))
         {
-            Destroy(collision.gameObject);
+            //Destroy(collision.gameObject);
+            player.onBulletStored(collision.rigidbody);
 
             currentHP -= 1;
 
             if (currentHP <= 0)
-            {
-
-                player.Score += scoreAdd;
+            {               
                 if (player != null && player.OnPlayerScoreChanged != null)
                 {
-                    player.OnPlayerScoreChanged();
-                    
+                    player.OnPlayerScoreChanged();       
                 }
-
                 Destroy(gameObject);
             }
         }
@@ -54,8 +48,7 @@ public class Target : MonoBehaviour
                 if(player.OnPlayerHit != null)
                 {
                     player.OnPlayerHit();
-                }               
-                player.Lives -= 1;
+                }                              
                 if (player.Lives <= 0 && player.OnPlayerDied != null)
                 {
                     player.OnPlayerDied();

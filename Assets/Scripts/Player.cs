@@ -1,26 +1,33 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider))]
 public class Player : MonoBehaviour
 {
+    public delegate void OnBulletStored(Rigidbody targetBullet);
+    public OnBulletStored onBulletStored;
+
     public const int PLAYER_LIVES = 3;
 
     private const float PLAYER_RADIUS = 0.4F;
 
-    public UIController uiController;
+    private UIController uiController;
 
     [Header("Movement")]
     [SerializeField]
     private float moveSpeed = 1F;
 
+    [SerializeField]
+    private int scoreAdd = 10;
+
+    private BulletPool bulletPool;
+
     private float hVal;
 
     #region Bullet
 
-    [Header("Bullet")]
-    [SerializeField]
     private Rigidbody bullet;
 
     [SerializeField]
@@ -64,16 +71,18 @@ public class Player : MonoBehaviour
     private bool ReachedRightBound { get => referencePointComponent >= rightCameraBound; }
     private bool ReachedLeftBound { get => referencePointComponent <= leftCameraBound; }
 
-    private bool CanShoot { get => bulletSpawnPoint != null && bullet != null; }
+    private bool CanShoot { get => bulletSpawnPoint != null; }
 
     #endregion MovementProperties
 
     public Action OnPlayerDied;
     public Action OnPlayerHit;
     public Action OnPlayerScoreChanged;
+    private void Awake()
+    {
+        bulletPool = GetComponent<BulletPool>();
+    }
 
-
-    // Start is called before the first frame update
     private void Start()
     {
         leftCameraBound = Camera.main.ViewportToWorldPoint(new Vector3(
@@ -83,29 +92,26 @@ public class Player : MonoBehaviour
             1F, 0F, 0F)).x - PLAYER_RADIUS;
 
         Lives = PLAYER_LIVES;
-        Score = 0;
         uiController = FindObjectOfType<UIController>();
+        if (this != null)
+        {
+            this.OnPlayerHit += HealthChanged;
+            this.OnPlayerScoreChanged += ScoreChanged;
+        }
     }
 
-    /*private void ScoreChanged()
+    public void ScoreChanged()
     {
         this.Score += scoreAdd;
     }
 
-    private void HealthChanged()
+    public void HealthChanged()
     {
         this.Lives -= 1;
-    }*/
-    private void FixedUpdate()
-    {
-
-
-
     }
-    // Update is called once per frame
+
     private void Update()
     {
-        
         if (Lives <= 0)
         {
             uiController.Subscribe3();
@@ -124,13 +130,20 @@ public class Player : MonoBehaviour
                 referencePointComponent = transform.position.x;
             }
 
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-                && CanShoot)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && CanShoot)
             {
-                Instantiate<Rigidbody>
-                   (bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation)
-                   .AddForce(transform.up * bulletSpeed, ForceMode.Impulse);
+                bullet = bulletPool.SpawnBullet();
+                bullet.transform.position = bulletSpawnPoint.position;
+                bullet.AddForce(transform.up * bulletSpeed, ForceMode.Impulse);
+                Invoke("StoreBullet", 3F);
             }
+        }
+    }
+    private void StoreBullet()
+    {
+        if (onBulletStored != null)
+        {
+            onBulletStored(bullet);
         }
     }
 }

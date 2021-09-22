@@ -77,7 +77,7 @@ public class UIController : MonoBehaviour
         {
             if (lifeImages[i] != null && lifeImages[i].enabled)
             {
-                lifeImages[i].gameObject.SetActive(playerRef.Lives >= i + 2);
+                lifeImages[i].gameObject.SetActive(playerRef.Lives >= i + 1);
             }
         }
     }

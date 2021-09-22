@@ -36,7 +36,6 @@ public class SpawnController : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     private void Start()
     {
         if (spawnObjects.Length > 0 && IsThereAtLeastOneObjectToSpawn)
