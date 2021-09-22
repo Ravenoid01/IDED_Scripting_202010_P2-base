@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
 
     private UIController uiController;
 
-    private List<Rigidbody> bulletCollection = new List<Rigidbody>();
+    private Queue<Rigidbody> bulletCollection = new Queue<Rigidbody>();
 
     [Header("Movement")]
     [SerializeField]
@@ -138,35 +138,22 @@ public class Player : MonoBehaviour
             {
                 bullet = bulletPool.SpawnBullet();
                 ChooseBullet(bullet);
-                bullet.velocity = Vector3.zero;
+                //bullet.velocity = Vector3.zero;
                 bullet.transform.position = bulletSpawnPoint.position;               
                 bullet.AddForce(bulletVelocity, ForceMode.Impulse);               
             }
         }
     }
-
-    private void OnEnable()
+    void ChooseBullet(Rigidbody bulletItem)
     {
-        Invoke("StoreBullet", 4f);
-    }
-
-    private void OnDisable()
-    {
-        CancelInvoke("Storebullet");
-    }
-    private void ChooseBullet(Rigidbody bulletItem)
-    {
-        bulletCollection.Add(bulletItem);
+        bulletCollection.Enqueue(bulletItem);
         Invoke("StoreBullet", 3F);
     }
     private void StoreBullet()
     {
-
         if (onBulletStored != null)
         {
-            onBulletStored(bulletCollection[0]);
-            bulletCollection.RemoveAt(0);
+            onBulletStored(bulletCollection.Dequeue());        
         }
-
     }
 }

@@ -25,7 +25,6 @@ public class Target : MonoBehaviour
 
         if (collidedObjectLayer.Equals(Utils.BulletLayer))
         {
-            //Destroy(collision.gameObject);
             player.onBulletStored(collision.rigidbody);
 
             currentHP -= 1;
