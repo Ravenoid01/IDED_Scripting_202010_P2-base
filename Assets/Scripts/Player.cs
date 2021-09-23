@@ -138,7 +138,6 @@ public class Player : MonoBehaviour
             {
                 bullet = bulletPool.SpawnBullet();
                 ChooseBullet(bullet);
-                //bullet.velocity = Vector3.zero;
                 bullet.transform.position = bulletSpawnPoint.position;               
                 bullet.AddForce(bulletVelocity, ForceMode.Impulse);               
             }
