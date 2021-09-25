@@ -15,16 +15,13 @@ public class Player : MonoBehaviour
 
     private UIController uiController;
 
+    private BulletPool bulletPool;
+
     private Queue<Rigidbody> bulletCollection = new Queue<Rigidbody>();
 
     [Header("Movement")]
     [SerializeField]
     private float moveSpeed = 1F;
-
-    [SerializeField]
-    private int scoreAdd = 10;
-
-    private BulletPool bulletPool;
 
     private float hVal;
 
@@ -36,8 +33,6 @@ public class Player : MonoBehaviour
     private Transform bulletSpawnPoint;
 
     private float bulletSpeed = 10F;
-
-    private Vector3 bulletVelocity;
 
     #endregion Bullet
 
@@ -80,11 +75,12 @@ public class Player : MonoBehaviour
 
     public Action OnPlayerDied;
     public Action OnPlayerHit;
-    public Action OnPlayerScoreChanged;
+    public delegate void OnPlayerScoreChanged(int scoreTarget);
+    public OnPlayerScoreChanged onPlayerScoreChanged;
+
     private void Awake()
     {
-        bulletPool = GetComponent<BulletPool>();
-        bulletVelocity = transform.up * bulletSpeed;
+        
     }
 
     private void Start()
@@ -97,50 +93,56 @@ public class Player : MonoBehaviour
 
         Lives = PLAYER_LIVES;
         uiController = FindObjectOfType<UIController>();
+        bulletPool = GetComponent<BulletPool>();
+
         if (this != null)
         {
-            this.OnPlayerHit += HealthChanged;
-            this.OnPlayerScoreChanged += ScoreChanged;
+            OnPlayerHit += HealthChanged;
+            onPlayerScoreChanged += ScoreChanged;
         }
     }
 
-    public void ScoreChanged()
+    public void ScoreChanged(int scoreTarget)
     {
-        this.Score += scoreAdd;
+        if(this != null)
+        {
+            this.Score += scoreTarget;
+        }
     }
 
     public void HealthChanged()
     {
-        this.Lives -= 1;
+        if (this != null)
+        {
+            Lives -= 1;
+            if (Lives <= 0 && OnPlayerDied != null)
+            {
+                OnPlayerDied();
+                uiController.Subscribe3();
+                enabled = false;
+                gameObject.SetActive(false);
+            }
+        }
     }
 
     private void Update()
     {
-        if (Lives <= 0)
+        uiController.Subscribe2();
+        uiController.Subscribe1();
+        hVal = Input.GetAxis("Horizontal");
+
+        if (ShouldMove)
         {
-            uiController.Subscribe3();
-            this.enabled = false;
-            gameObject.SetActive(false);
+            transform.Translate(transform.right * hVal * moveSpeed * Time.deltaTime);
+            referencePointComponent = transform.position.x;
         }
-        else
+
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && CanShoot)
         {
-            uiController.Subscribe2();
-            uiController.Subscribe1();
-            hVal = Input.GetAxis("Horizontal");
-
-            if (ShouldMove)
-            {
-                transform.Translate(transform.right * hVal * moveSpeed * Time.deltaTime);
-                referencePointComponent = transform.position.x;
-            }
-
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && CanShoot)
-            {
-                bullet = bulletPool.SpawnBullet();
-                ChooseBullet(bullet);
-                bullet.transform.position = bulletSpawnPoint.position;               
-                bullet.AddForce(bulletVelocity, ForceMode.Impulse);               
-            }
+            bullet = bulletPool.SpawnBullet();
+            ChooseBullet(bullet);
+            bullet.transform.position = bulletSpawnPoint.position;
+            bullet.AddForce(transform.up * bulletSpeed, ForceMode.Impulse);
         }
     }
     void ChooseBullet(Rigidbody bulletItem)

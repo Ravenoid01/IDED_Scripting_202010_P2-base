@@ -11,7 +11,7 @@ public class BulletPool : MonoBehaviour
     [SerializeField]
     private Transform bulletSpawnPoint;
 
-    private int poolSize = 100;
+    private int poolSize = 200;
 
     private List<Rigidbody> bulletList = new List<Rigidbody>();
 

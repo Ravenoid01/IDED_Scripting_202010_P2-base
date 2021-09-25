@@ -44,7 +44,7 @@ public class UIController : MonoBehaviour
     {
         if (scoreLabel != null)
         {
-            playerRef.OnPlayerScoreChanged += ChangeScore;
+            playerRef.onPlayerScoreChanged += ChangeScore;
         }
     }
 
@@ -66,7 +66,7 @@ public class UIController : MonoBehaviour
         ToggleRestartButton(true);
     }
 
-    private void ChangeScore()
+    private void ChangeScore(int score)
     {
         scoreLabel.text = playerRef.Score.ToString();
     }

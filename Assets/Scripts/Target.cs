@@ -10,6 +10,9 @@ public class Target : MonoBehaviour
     [SerializeField]
     private int maxHP = 1;
 
+    [SerializeField]
+    private int scoreAdd = 10;
+
     private int currentHP;
 
     private void Start()
@@ -31,9 +34,9 @@ public class Target : MonoBehaviour
 
             if (currentHP <= 0)
             {               
-                if (player != null && player.OnPlayerScoreChanged != null)
+                if (player != null && player.onPlayerScoreChanged != null)
                 {
-                    player.OnPlayerScoreChanged();       
+                    player.onPlayerScoreChanged(scoreAdd);       
                 }
                 Destroy(gameObject);
             }
@@ -48,13 +51,7 @@ public class Target : MonoBehaviour
                 {
                     player.OnPlayerHit();
                 }                              
-                if (player.Lives <= 0 && player.OnPlayerDied != null)
-                {
-                    player.OnPlayerDied();
-                }
-                
             }
-
             Destroy(gameObject);
         }
     }
