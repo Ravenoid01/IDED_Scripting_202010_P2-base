@@ -10,20 +10,17 @@ public class Target : MonoBehaviour
 
     public Rigidbody rb;
 
-    private const float TIME_TO_DESTROY = 10F;
-
     [SerializeField]
     private int maxHP = 1;
 
     [SerializeField]
     private int scoreAdd = 10;
 
-    private int currentHP;
+    public int currentHP;
 
     private void Start()
     {
         currentHP = maxHP;
-        Destroy(gameObject, TIME_TO_DESTROY);
         player = FindObjectOfType<Player>();
         rb = GetComponent<Rigidbody>();
     }
@@ -44,13 +41,12 @@ public class Target : MonoBehaviour
                 {
                     player.onPlayerScoreChanged(scoreAdd);       
                 }
-                Destroy(gameObject);
+                onTargetStored(this);
             }
         }
         else if (collidedObjectLayer.Equals(Utils.PlayerLayer) ||
             collidedObjectLayer.Equals(Utils.KillVolumeLayer))
         {
-
             if (player != null)
             {
                 if(player.OnPlayerHit != null)
@@ -58,7 +54,22 @@ public class Target : MonoBehaviour
                     player.OnPlayerHit();
                 }                              
             }
-            Destroy(gameObject);
+            onTargetStored(this);
+        }
+    }
+    private void OnEnable()
+    {
+        Invoke("StoreTarget", 4f);
+    }
+    private void OnDisable()
+    {
+        CancelInvoke("StoreTarget");
+    }
+    private void StoreTarget()
+    {
+        if(onTargetStored != null)
+        {
+            onTargetStored(this);
         }
     }
 }

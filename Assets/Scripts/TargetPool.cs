@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetPool : MonoBehaviour
+public abstract class TargetPool : MonoBehaviour
 {
     [SerializeField]
     private Target basetarget;
 
-    private int poolSize = 10;
+    private int poolSize = 3;
 
     private List<Target> targetCollection = new List<Target>();
 
@@ -20,15 +20,26 @@ public class TargetPool : MonoBehaviour
             target = targetCollection[0];
             targetCollection.RemoveAt(0);
             target.gameObject.SetActive(true);
+            target.enabled = true;
         }
+        else
+        {
+            target = Instantiate<Target>(basetarget);
+        }
+
+        target.onTargetStored += StoreTarget;
+
         return target;
     }
 
     public void StoreTarget(Target storedTarget)
     {
+        storedTarget.onTargetStored -= StoreTarget;
         targetCollection.Add(storedTarget);
         storedTarget.rb.velocity = Vector3.zero;
         storedTarget.gameObject.SetActive(false);
+        storedTarget.enabled = false;
+        storedTarget.transform.position = transform.position;
     }
 
     private void Awake()
@@ -37,7 +48,8 @@ public class TargetPool : MonoBehaviour
         {
             for(int i = 0; i< poolSize; i++)
             {
-                targetCollection.Add(Instantiate<Target>(basetarget));
+                Target targetInstance = Instantiate<Target>(basetarget);
+                StoreTarget(targetInstance);
             }
         }
     }

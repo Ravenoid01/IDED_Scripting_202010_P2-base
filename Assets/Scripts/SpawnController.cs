@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class SpawnController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject[] spawnObjects;
+    private List<Target> targetList = new List<Target>();
+
+    private Target spawnGO;
 
     [SerializeField]
     private float spawnRate = 1f;
@@ -16,39 +18,22 @@ public class SpawnController : MonoBehaviour
 
     private Vector3 spawnPoint;
 
-    private TargetPool targetPool;
+    private LowTargetPool lowTargetPool;
+    private MidTargetPool midTargetPool;
+    private HardTargetPool hardTargetPool;
 
     private void Awake()
     {
-        targetPool = GetComponent<TargetPool>();
-    }
-
-    private bool IsThereAtLeastOneObjectToSpawn
-    {
-        get
-        {
-            bool result = false;
-
-            for (int i = 0; i < spawnObjects.Length; i++)
-            {
-                result = spawnObjects[i] != null;
-
-                if (result)
-                {
-                    break;
-                }
-            }
-
-            return result;
-        }
+        lowTargetPool = GetComponent<LowTargetPool>();
+        midTargetPool = GetComponent<MidTargetPool>();
+        hardTargetPool = GetComponent<HardTargetPool>();
     }
 
     private void Start()
     {
-        if (spawnObjects.Length > 0 && IsThereAtLeastOneObjectToSpawn)
+        if(midTargetPool != null && hardTargetPool != null && lowTargetPool != null)
         {
             InvokeRepeating("SpawnObject", firstSpawnDelay, spawnRate);
-
             if (player != null)
             {
                 player.OnPlayerDied += StopSpawning;
@@ -58,15 +43,28 @@ public class SpawnController : MonoBehaviour
 
     private void SpawnObject()
     {
-        GameObject spawnGO = spawnObjects[Random.Range(0, spawnObjects.Length)];
-
-        if (spawnGO != null)
+        if (midTargetPool != null && hardTargetPool != null && lowTargetPool != null)
         {
-            spawnPoint = Camera.main.ViewportToWorldPoint(new Vector3(
-                Random.Range(0F, 1F), 1F, transform.position.z));
+            int random = Random.Range(1, 4);
+            if (random == 1)
+            {
+                spawnGO = lowTargetPool.GetTarget();
+                spawnGO.currentHP = 1;
+            }
+            else if (random == 2)
+            {
+                spawnGO = midTargetPool.GetTarget();
+                spawnGO.currentHP = 2;
+            }
+            else
+            {
+                spawnGO = hardTargetPool.GetTarget();
+                spawnGO.currentHP = 3;
+            }
 
-            GameObject instance = Instantiate(spawnGO, spawnPoint, Quaternion.identity);
-        }
+            spawnGO.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(
+                    Random.Range(0F, 1F), 1F, transform.position.z));
+        }          
     }
 
     private void StopSpawning()

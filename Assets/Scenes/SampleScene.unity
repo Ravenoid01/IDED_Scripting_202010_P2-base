@@ -1170,6 +1170,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1134325182}
   - component: {fileID: 1134325181}
+  - component: {fileID: 1134325185}
+  - component: {fileID: 1134325184}
+  - component: {fileID: 1134325183}
   m_Layer: 0
   m_Name: SpawnController
   m_TagString: Untagged
@@ -1189,10 +1192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269aa7073773a23408cce0f4eb61f0d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnObjects:
-  - {fileID: 2627135051368097643, guid: b5f0d6b4e9ba9704a9e36c5bac0a930b, type: 3}
-  - {fileID: 2627135051368097643, guid: 66c2fad4b964999488879a54fc3c5564, type: 3}
-  - {fileID: 2627135051368097643, guid: a57facc0ab4ba144e8a7de39761c5d6e, type: 3}
   spawnRate: 1.25
   firstSpawnDelay: 0
   player: {fileID: 2018314408}
@@ -1210,6 +1209,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1134325183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134325180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9e0366c6eac2d42ae0fbb16fb9616d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basetarget: {fileID: 2627135051368097642, guid: 66c2fad4b964999488879a54fc3c5564,
+    type: 3}
+--- !u!114 &1134325184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134325180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14e91843ffd7f834ca5ee1c606ab307c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basetarget: {fileID: 2627135051368097642, guid: a57facc0ab4ba144e8a7de39761c5d6e,
+    type: 3}
+--- !u!114 &1134325185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134325180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f64a11cd844310479e94ab37d446ca4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basetarget: {fileID: 2627135051368097642, guid: b5f0d6b4e9ba9704a9e36c5bac0a930b,
+    type: 3}
 --- !u!1 &1181273066
 GameObject:
   m_ObjectHideFlags: 0
@@ -1614,9 +1655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 7.5
-  scoreAdd: 10
   bulletSpawnPoint: {fileID: 8458616}
-  bulletSpeed: 10
 --- !u!114 &2018314409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1632,4 +1671,3 @@ MonoBehaviour:
   defaultBullet: {fileID: 5769844902801545485, guid: 659cbe9196140434f8585826b82346ba,
     type: 3}
   bulletSpawnPoint: {fileID: 8458616}
-  poolSize: 30

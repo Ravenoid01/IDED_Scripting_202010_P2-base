@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider))]
@@ -78,11 +77,6 @@ public class Player : MonoBehaviour
     public delegate void OnPlayerScoreChanged(int scoreTarget);
     public OnPlayerScoreChanged onPlayerScoreChanged;
 
-    private void Awake()
-    {
-        
-    }
-
     private void Start()
     {
         leftCameraBound = Camera.main.ViewportToWorldPoint(new Vector3(
@@ -106,7 +100,7 @@ public class Player : MonoBehaviour
     {
         if(this != null)
         {
-            this.Score += scoreTarget;
+            Score += scoreTarget;
         }
     }
 
