@@ -3,7 +3,12 @@
 [RequireComponent(typeof(Collider))]
 public class Target : MonoBehaviour
 {
+    public delegate void OnTargetStored(Target target);
+    public OnTargetStored onTargetStored;
+
     private Player player;
+
+    public Rigidbody rb;
 
     private const float TIME_TO_DESTROY = 10F;
 
@@ -20,6 +25,7 @@ public class Target : MonoBehaviour
         currentHP = maxHP;
         Destroy(gameObject, TIME_TO_DESTROY);
         player = FindObjectOfType<Player>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision)

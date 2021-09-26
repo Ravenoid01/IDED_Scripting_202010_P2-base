@@ -16,6 +16,13 @@ public class SpawnController : MonoBehaviour
 
     private Vector3 spawnPoint;
 
+    private TargetPool targetPool;
+
+    private void Awake()
+    {
+        targetPool = GetComponent<TargetPool>();
+    }
+
     private bool IsThereAtLeastOneObjectToSpawn
     {
         get
